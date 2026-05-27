@@ -1,0 +1,26 @@
+/* base reset + native macOS window feel */
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: #0d0e12;
+}
+
+/* The frameless window uses an inset title bar (traffic lights).
+   This strip is draggable so the window moves like a native app,
+   while buttons/inputs inside it remain clickable. */
+.titlebar-drag {
+  -webkit-app-region: drag;
+  height: 30px;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+button, input, a, select, textarea, [role="button"] {
+  -webkit-app-region: no-drag;
+}
+
+/* hide scrollbars chrome-style but keep scrolling */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #2a2e37; border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
