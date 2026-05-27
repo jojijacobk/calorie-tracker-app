@@ -732,7 +732,7 @@ export default function App() {
         )}
 
         <div style={{ textAlign: "center", fontSize: 11, color: "#565c66", marginTop: 20, lineHeight: 1.6 }}>
-          Bars show recorded <strong style={{ color: "#7c828e" }}>Total kcal</strong>, split proportionally by macro calories (carb·4, protein·4, fat·9).
+          Bar height = recorded <strong style={{ color: "#7c828e" }}>Total kcal</strong>. Colour segments show each macro's caloric share (carbs &amp; protein = 4 kcal/g, fat = 9 kcal/g).
           Month/Year bars show <strong style={{ color: "#7c828e" }}>average daily</strong> calories.
         </div>
       </div>
