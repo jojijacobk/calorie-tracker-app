@@ -1,0 +1,8 @@
+node_modules/
+dist/
+release/
+ios/App/Pods/
+ios/App/App/public/
+*.log
+.DS_Store
+.claude/
