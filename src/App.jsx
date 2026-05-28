@@ -220,17 +220,18 @@ function buildDaily(entries) {
 /* ============================================================================
    Chart data builders
    ============================================================================ */
-function buildChartData(view, cursorISO, entries, daily) {
+function buildChartData(view, cursorISO, entries, daily, isMobile = false) {
   const cursor = fromISO(cursorISO);
 
   if (view === "day") {
     const day = daily.get(cursorISO);
     if (!day) return [];
+    const maxLen = isMobile ? 14 : 22;
     return day.meals.map((m, i) => {
       const seg = segments(m.carb, m.protein, m.fat, m.total);
       return {
         key: `${i}`,
-        label: m.meal.length > 22 ? m.meal.slice(0, 21) + "…" : m.meal,
+        label: m.meal.length > maxLen ? m.meal.slice(0, maxLen - 1) + "…" : m.meal,
         fullLabel: m.meal,
         carbKcal: seg.carbKcal, proteinKcal: seg.proteinKcal, fatKcal: seg.fatKcal,
         carbG: m.carb, proteinG: m.protein, fatG: m.fat, total: m.total,
@@ -442,8 +443,10 @@ export default function App() {
   useEffect(() => store.set("ct_view", view), [view]);
   useEffect(() => store.set("ct_cursor", cursorISO), [cursorISO]);
 
+  const isMobile = useWindowWidth() < 560;
+
   const daily = useMemo(() => buildDaily(entries), [entries]);
-  const chartData = useMemo(() => buildChartData(view, cursorISO, entries, daily), [view, cursorISO, entries, daily]);
+  const chartData = useMemo(() => buildChartData(view, cursorISO, entries, daily, isMobile), [view, cursorISO, entries, daily, isMobile]);
   const stats = useMemo(() => buildStats(view, cursorISO, daily, settings.budget), [view, cursorISO, daily, settings.budget]);
   const title = useMemo(() => buildTitle(view, cursorISO), [view, cursorISO]);
 
@@ -456,8 +459,6 @@ export default function App() {
   const ticks = []; for (let t = 0; t <= yMax; t += inc) ticks.push(t);
 
   const hasData = chartData.some((d) => d.total > 0);
-
-  const isMobile = useWindowWidth() < 560;
 
   /* ---------- in-bar / above-bar label renderers ---------- */
   const segFont = isMobile ? 9 : 11;
@@ -636,12 +637,12 @@ export default function App() {
 
               {hasData ? (
                 <ResponsiveContainer width="100%" height={isMobile ? 320 : 400}>
-                  <BarChart data={chartData} margin={{ top: 24, right: 8, left: isMobile ? -16 : 0, bottom: view === "day" ? 8 : 4 }}>
+                  <BarChart data={chartData} margin={{ top: 24, right: 8, left: 0, bottom: view === "day" ? 8 : 4 }}>
                     <XAxis
-                      dataKey="label" tick={{ fill: "#8b919c", fontSize: isMobile ? 9.5 : 11, fontFamily: "var(--body)" }}
+                      dataKey="label" tick={{ fill: "#8b919c", fontSize: (view === "day" && isMobile) ? 8 : (isMobile ? 9.5 : 11), fontFamily: "var(--body)" }}
                       axisLine={{ stroke: "#23262e" }} tickLine={false}
-                      interval={0} angle={view === "day" && !isMobile ? -18 : 0}
-                      textAnchor={view === "day" && !isMobile ? "end" : "middle"} height={view === "day" ? 46 : 28}
+                      interval={0} angle={view === "day" ? (isMobile ? -60 : -18) : 0}
+                      textAnchor={view === "day" ? "end" : "middle"} height={view === "day" ? (isMobile ? 72 : 46) : 28}
                     />
                     <YAxis
                       domain={[0, yMax]} ticks={ticks}
