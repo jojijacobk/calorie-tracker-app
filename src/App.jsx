@@ -425,7 +425,15 @@ export default function App() {
   const [drag, setDrag] = useState(false);
   const fileRef = useRef(null);
 
-  /* persistence */
+  /* splash: fade out and remove after first React mount */
+  useEffect(() => {
+    const splash = document.getElementById("ct-splash");
+    if (!splash) return;
+    splash.style.opacity = "0";
+    const t = setTimeout(() => splash.remove(), 460);
+    return () => clearTimeout(t);
+  }, []);
+
   /* native iOS: light status-bar text, and don't overlay web content */
   useEffect(() => {
     if (!IS_NATIVE_IOS) return;
